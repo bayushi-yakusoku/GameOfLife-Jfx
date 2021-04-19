@@ -1,5 +1,7 @@
 package alo.jfx;
 
+import alo.jfx.controller.Cell;
+import alo.jfx.controller.GameOfLife;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +16,7 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static GameOfLife gameOfLife;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -32,7 +35,21 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
-    }
+        gameOfLife = new GameOfLife(100, 20);
 
+        gameOfLife.initCells(
+                new Cell(0,0),
+                new Cell(1,1),
+                new Cell(2,2),
+                new Cell(3,3),
+                new Cell(4,1),
+                new Cell(-1,200)
+        );
+
+        String board = gameOfLife.getBoardString();
+
+        System.out.print(board);
+
+//        launch();
+    }
 }
