@@ -1,5 +1,7 @@
 package alo.jfx.controller;
 
+import alo.jfx.model.Cell;
+import alo.jfx.model.GameOfLife;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
