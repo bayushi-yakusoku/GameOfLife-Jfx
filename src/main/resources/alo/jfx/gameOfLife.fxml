@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" prefHeight="768.0" prefWidth="1024.0" spacing="20.0"
+      stylesheets="@gameOfLife.css" xmlns="http://javafx.com/javafx/11.0.1"
+      fx:controller="alo.jfx.controller.ControllerGameOfLife">
+    <children>
+        <Pane prefHeight="600.0" prefWidth="980.0" styleClass="custom-dashed-border">
+            <children>
+                <Canvas fx:id="canvasGameOfLife" height="570.0" layoutX="17.0" layoutY="15.0" width="950.0"/>
+            </children>
+        </Pane>
+        <Pane prefHeight="88.0" prefWidth="560.0">
+            <children>
+                <Label layoutX="258.0" layoutY="14.0" text="Game Of Life"/>
+                <Button fx:id="buttonStart" layoutX="396.0" layoutY="47.0" mnemonicParsing="false"
+                        onAction="#onClickStartGameOfLife" text="Start"/>
+                <Button fx:id="buttonStep" layoutX="466.0" layoutY="47.0" mnemonicParsing="false"
+                        onAction="#onClickSingleStepUpdate" text="Step"/>
+                <Button fx:id="buttonStop" layoutX="535.0" layoutY="47.0" mnemonicParsing="false"
+                        onAction="#onClickStopGameOfLife" text="Stop"/>
+                <Button fx:id="buttonNewSeed" layoutX="600.0" layoutY="47.0" mnemonicParsing="false"
+                        onAction="#onClickNewSeed" text="New Seed"/>
+                <Button fx:id="buttonClear" layoutX="690.0" layoutY="47.0" mnemonicParsing="false"
+                        onAction="#onClickClear" text="Clear"/>
+            </children>
+        </Pane>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+</VBox>

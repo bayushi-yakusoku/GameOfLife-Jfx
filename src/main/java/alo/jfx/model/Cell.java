@@ -1,5 +1,8 @@
-package alo.jfx.controller;
+package alo.jfx.model;
 
+/**
+ * Simple class to store coordinates
+ */
 public class Cell {
     private int x = 0;
     private int y = 0;
