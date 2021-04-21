@@ -3,7 +3,7 @@ package alo.jfx.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameOfLifeTest {
 
@@ -70,18 +70,36 @@ public class GameOfLifeTest {
         assertEquals(expectedResult, gameOfLife.getState(0,0));
     }
 
-    @DisplayName("GameOfLifeTest: Test get number of neighbors alive")
+    @DisplayName("GameOfLifeTest: Number of neighbors alive should be 2")
     @Test
-    public void getNbNeighborsAlive() {
-        GameOfLife gameOfLife = new GameOfLife(10,10);
+    public void getNbNeighborsAliveEqual2() {
+        GameOfLife gameOfLife = new GameOfLife(10, 10);
         gameOfLife.initCells(
-                new Cell(0,0),
-                new Cell(0,1),
-                new Cell(1,0));
+                new Cell(0, 0),
+                new Cell(0, 1),
+                new Cell(1, 0));
 
         int expectedResult = 2;
 
-        assertEquals(expectedResult, gameOfLife.getNbNeighborsAlive(0,0),
+        assertEquals(expectedResult, gameOfLife.getNbNeighborsAlive(0, 0),
                 "Number of living neighbors is wrong!");
     }
+
+    @DisplayName("GameOfLifeTest: Number of neighbors alive should be 5")
+    @Test
+    public void getNbNeighborsAliveEqual5() {
+        GameOfLife gameOfLife = new GameOfLife(10, 10);
+        gameOfLife.initCells(
+                new Cell(0, 0),
+                new Cell(0, 1),
+                new Cell(1, 0),
+                new Cell(2, 0),
+                new Cell(2, 2));
+
+        int expectedResult = 5;
+
+        assertEquals(expectedResult, gameOfLife.getNbNeighborsAlive(1, 1),
+                "Number of living neighbors is wrong!");
+    }
+
 }

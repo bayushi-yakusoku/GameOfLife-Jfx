@@ -35,20 +35,25 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        gameOfLife = new GameOfLife(100, 20);
+        gameOfLife = new GameOfLife(20, 10);
 
         gameOfLife.initCells(
-                new Cell(0,0),
-                new Cell(1,1),
-                new Cell(2,2),
-                new Cell(3,3),
-                new Cell(4,1),
-                new Cell(-1,200)
+                new Cell(2, 4),
+                new Cell(3, 4),
+                new Cell(4, 4),
+                new Cell(5, 4),
+                new Cell(6, 4),
+                new Cell(3, 3)
         );
 
-        String board = gameOfLife.getBoardString();
+        System.out.println("##############################################################");
+        System.out.print(gameOfLife.getBoardString());
 
-        System.out.print(board);
+        for (int nbTurns = 0; nbTurns < 10; nbTurns++) {
+            System.out.println(nbTurns + 1 + " ##############################################################");
+            gameOfLife.updateBoard();
+            System.out.print(gameOfLife.getBoardString());
+        }
 
 //        launch();
     }
