@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" prefHeight="768.0" prefWidth="1024.0" spacing="20.0"
       stylesheets="@gameOfLife.css" xmlns="http://javafx.com/javafx/11.0.1"
-      fx:controller="alo.jfx.controller.ControllerGameOfLife">
+      fx:controller="alo.jfx.fxml.gameoflife.ControllerGameOfLife">
     <children>
         <Pane prefHeight="600.0" prefWidth="980.0" styleClass="custom-dashed-border">
             <children>

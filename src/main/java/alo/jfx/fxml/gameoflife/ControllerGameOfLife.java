@@ -1,5 +1,7 @@
-package alo.jfx.controller;
+package alo.jfx.fxml.gameoflife;
 
+import alo.jfx.controller.MyClosable;
+import alo.jfx.fxml.hub.ControllerHub;
 import alo.jfx.model.Cell;
 import alo.jfx.model.GameOfLife;
 import javafx.animation.Animation;
@@ -20,7 +22,7 @@ import java.util.Random;
 
 public class ControllerGameOfLife implements MyClosable {
 
-    private static final Logger logger = LogManager.getLogger(PrimaryController.class);
+    private static final Logger logger = LogManager.getLogger(ControllerHub.class);
 
     private int xNbCells;
     private int yNbCells;
