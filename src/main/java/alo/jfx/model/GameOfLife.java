@@ -93,6 +93,34 @@ public class GameOfLife {
     }
 
     /**
+     * Set a cell, identified by its coordinates, at a particular state
+     *
+     * @param x     horizontal coordinate
+     * @param y     vertical coordinate
+     * @param state new state for the cell
+     */
+    public void setState(int x, int y, int state) {
+        board[x][y] = state;
+    }
+
+    /**
+     * Alternate the state of the cell, identified by its coordinates,
+     * between Dead and Alive and return the new state
+     *
+     * @param x horizontal coordinate
+     * @param y vertical coordinate
+     * @return state of the cell after the alternate operation
+     */
+    public int alternateState(int x, int y) {
+        if (board[x][y] == ALIVE)
+            board[x][y] = DEAD;
+        else
+            board[x][y] = ALIVE;
+
+        return board[x][y];
+    }
+
+    /**
      * Get the value of a cell identified by its coordinates
      *
      * @param x horizontal coordinate

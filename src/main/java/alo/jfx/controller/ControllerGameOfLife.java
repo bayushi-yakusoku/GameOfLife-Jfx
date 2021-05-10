@@ -1,5 +1,6 @@
 package alo.jfx.controller;
 
+import alo.jfx.model.Cell;
 import alo.jfx.model.GameOfLife;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -7,6 +8,8 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
@@ -35,6 +38,9 @@ public class ControllerGameOfLife implements MyClosable {
     private int minCellSize;
 
     private Random random;
+
+    @FXML
+    private TextField textFieldCellCoordinates;
 
     /**
      * Canvas for displaying the {@link GameOfLife} board
@@ -97,6 +103,9 @@ public class ControllerGameOfLife implements MyClosable {
         currentStep = 0;
     }
 
+    private Cell currentCell;
+    private int pickupState;
+
     /**
      * Method called by {@link javafx.fxml.FXMLLoader} after instantiating this controller
      * (Controller is referenced in the .fxml file)
@@ -105,7 +114,10 @@ public class ControllerGameOfLife implements MyClosable {
         logger.debug("initialize: " + this.getClass().getCanonicalName());
 
         random = new Random();
-        gc = canvasGameOfLife.getGraphicsContext2D();
+
+        currentCell = new Cell(-1, -1);
+
+        setupCanvas();
 
         minCellSize = 12;
 
@@ -116,6 +128,66 @@ public class ControllerGameOfLife implements MyClosable {
         drawGameOfLife();
 
         initTimeLine();
+    }
+
+    private void setupCanvas() {
+        gc = canvasGameOfLife.getGraphicsContext2D();
+
+        canvasGameOfLife.addEventHandler(MouseEvent.ANY, this::canvasHandleMouseEvent);
+    }
+
+    private void canvasHandleMouseEvent(MouseEvent event) {
+//        logger.debug("Canvas: Handle Mouse event: " + event.getEventType());
+
+        Cell cell = getCellFromMouseCoordinates(event.getX(), event.getY());
+        textFieldCellCoordinates.setText("" + cell);
+
+        if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
+
+            if (!cell.equals(currentCell)) {
+                currentCell = cell;
+                logger.debug("Moved to another cell: " + currentCell);
+            }
+
+            return;
+        }
+
+        if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            logger.debug("Canvas Event: Mouse Dragged");
+
+            if (!cell.equals(currentCell)) {
+                currentCell = cell;
+                logger.debug("Dragged to another cell: " + currentCell);
+
+                gameOfLife.setState(cell.getX(), cell.getY(), pickupState);
+                drawGameOfLife();
+            }
+
+            return;
+        }
+
+        if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            logger.debug("Canvas Event: Mouse Pressed");
+
+            pickupState = gameOfLife.alternateState(cell.getX(), cell.getY());
+            drawGameOfLife();
+
+            return;
+        }
+
+        if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+            logger.debug("Canvas Event: Mouse Released");
+
+            return;
+        }
+
+        if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
+            logger.debug("Canvas Event: Mouse Clicked (" + event.getX() + ", " + event.getY() + ")");
+        }
+    }
+
+    private Cell getCellFromMouseCoordinates(double x, double y) {
+        return new Cell((int) (x / cellSize), (int) (y / cellSize));
     }
 
     private void initTimeLine() {

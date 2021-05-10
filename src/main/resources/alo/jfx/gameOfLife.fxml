@@ -14,19 +14,25 @@
                 <Canvas fx:id="canvasGameOfLife" height="570.0" layoutX="17.0" layoutY="15.0" width="950.0"/>
             </children>
         </Pane>
-        <Pane prefHeight="88.0" prefWidth="560.0">
+        <Pane prefHeight="57.0" prefWidth="984.0">
             <children>
                 <Label layoutX="258.0" layoutY="14.0" text="Game Of Life"/>
-                <Button fx:id="buttonStart" layoutX="396.0" layoutY="47.0" mnemonicParsing="false"
+                <Button fx:id="buttonStart" layoutX="397.0" layoutY="10.0" mnemonicParsing="false"
                         onAction="#onClickStartGameOfLife" text="Start"/>
-                <Button fx:id="buttonStep" layoutX="466.0" layoutY="47.0" mnemonicParsing="false"
+                <Button fx:id="buttonStep" layoutX="452.0" layoutY="10.0" mnemonicParsing="false"
                         onAction="#onClickSingleStepUpdate" text="Step"/>
-                <Button fx:id="buttonStop" layoutX="535.0" layoutY="47.0" mnemonicParsing="false"
+                <Button fx:id="buttonStop" layoutX="513.0" layoutY="10.0" mnemonicParsing="false"
                         onAction="#onClickStopGameOfLife" text="Stop"/>
-                <Button fx:id="buttonNewSeed" layoutX="600.0" layoutY="47.0" mnemonicParsing="false"
+                <Button fx:id="buttonNewSeed" layoutX="573.0" layoutY="10.0" mnemonicParsing="false"
                         onAction="#onClickNewSeed" text="New Seed"/>
-                <Button fx:id="buttonClear" layoutX="690.0" layoutY="47.0" mnemonicParsing="false"
+                <Button fx:id="buttonClear" layoutX="658.0" layoutY="10.0" mnemonicParsing="false"
                         onAction="#onClickClear" text="Clear"/>
+            </children>
+        </Pane>
+        <Pane prefHeight="48.0" prefWidth="984.0">
+            <children>
+                <Label layoutX="685.0" layoutY="13.0" text="Cell coordinates"/>
+                <TextField fx:id="textFieldCellCoordinates" layoutX="776.0" layoutY="9.0"/>
             </children>
         </Pane>
     </children>
