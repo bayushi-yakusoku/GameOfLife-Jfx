@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" prefHeight="768.0" prefWidth="1024.0" spacing="20.0"
-      stylesheets="@gameOfLife.css" xmlns="http://javafx.com/javafx/11.0.1"
-      fx:controller="alo.jfx.fxml.gameoflife.ControllerGameOfLife">
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@gameOfLife.css"
+      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="alo.jfx.fxml.gameoflife.ControllerGameOfLife">
+
     <children>
-        <Pane prefHeight="600.0" prefWidth="980.0" styleClass="custom-dashed-border">
+        <TabPane prefHeight="142.0" prefWidth="999.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="General">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <Button fx:id="buttonStart" layoutX="8.0" layoutY="8.0" mnemonicParsing="false"
+                                        onAction="#onClickStartGameOfLife" prefHeight="80.0" prefWidth="70.0"
+                                        text="Start"/>
+                                <Button fx:id="buttonStop" layoutX="78.0" layoutY="8.0" mnemonicParsing="false"
+                                        onAction="#onClickStopGameOfLife" prefHeight="80.0" prefWidth="70.0"
+                                        text="Stop"/>
+                                <Button fx:id="buttonStep" layoutX="148.0" layoutY="8.0" mnemonicParsing="false"
+                                        onAction="#onClickSingleStepUpdate" prefHeight="80.0" prefWidth="70.0"
+                                        text="Step"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Edition">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <Button fx:id="buttonNewSeed" layoutX="8.0" layoutY="8.0" mnemonicParsing="false"
+                                        onAction="#onClickNewSeed" prefHeight="80.0" prefWidth="70.0" text="New Seed"/>
+                                <Button fx:id="buttonClear" layoutX="78.0" layoutY="8.0" mnemonicParsing="false"
+                                        onAction="#onClickClear" prefHeight="80.0" prefWidth="70.0" text="Clear"/>
+
+                                <Slider layoutX="191.0" layoutY="41.0"/>
+                                <Slider layoutX="364.0" layoutY="41.0"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+
+        <Pane prefHeight="626.0" prefWidth="1024.0">
             <children>
-                <Canvas fx:id="canvasGameOfLife" height="570.0" layoutX="17.0" layoutY="15.0" width="950.0"/>
+                <Canvas fx:id="canvasGameOfLife" height="560.0" layoutX="22.0" layoutY="25.0" width="980.0"
+                        BorderPane.alignment="CENTER"/>
             </children>
         </Pane>
-        <Pane prefHeight="57.0" prefWidth="984.0">
+
+        <Pane id="bottom-pane" prefHeight="50.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
             <children>
-                <Label layoutX="258.0" layoutY="14.0" text="Game Of Life"/>
-                <Button fx:id="buttonStart" layoutX="397.0" layoutY="10.0" mnemonicParsing="false"
-                        onAction="#onClickStartGameOfLife" text="Start"/>
-                <Button fx:id="buttonStep" layoutX="452.0" layoutY="10.0" mnemonicParsing="false"
-                        onAction="#onClickSingleStepUpdate" text="Step"/>
-                <Button fx:id="buttonStop" layoutX="513.0" layoutY="10.0" mnemonicParsing="false"
-                        onAction="#onClickStopGameOfLife" text="Stop"/>
-                <Button fx:id="buttonNewSeed" layoutX="573.0" layoutY="10.0" mnemonicParsing="false"
-                        onAction="#onClickNewSeed" text="New Seed"/>
-                <Button fx:id="buttonClear" layoutX="658.0" layoutY="10.0" mnemonicParsing="false"
-                        onAction="#onClickClear" text="Clear"/>
-            </children>
-        </Pane>
-        <Pane prefHeight="48.0" prefWidth="984.0">
-            <children>
-                <Label layoutX="685.0" layoutY="13.0" text="Cell coordinates"/>
-                <TextField fx:id="textFieldCellCoordinates" layoutX="776.0" layoutY="9.0"/>
+                <Label fx:id="labelCellCoordinates" layoutX="907.0" layoutY="9.0" text="Cell (1, 10)"/>
+                <Label fx:id="labelCellSize" layoutX="26.0" layoutY="9.0" text="Cell Size: 10.0"/>
             </children>
         </Pane>
     </children>
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
 </VBox>

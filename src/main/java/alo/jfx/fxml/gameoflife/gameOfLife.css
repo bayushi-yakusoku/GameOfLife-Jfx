@@ -4,8 +4,11 @@
     -fx-border-style: segments(10, 15, 15, 15)  line-cap round ;
 }
 
-.pane {
-     -fx-border-color: blue ;
-     -fx-border-width: 5 ;
-     -fx-border-style: segments(10, 15, 15, 15)  line-cap round ;
+/*
+#pane-canvas {}
+*/
+
+#bottom-pane {
+     -fx-border-color: grey ;
+     -fx-border-width: 1 ;
 }
