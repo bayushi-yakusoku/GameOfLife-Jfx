@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@mystyle.css"
+      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="alo.jfx.fxml.test.ControllerTestStage">
+    <children>
+        <TabPane prefHeight="142.0" prefWidth="999.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Untitled Tab 1">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <Button fx:id="buttonPrivate" layoutX="14.0" layoutY="14.0" mnemonicParsing="false"
+                                        text="Button"/>
+                                <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" text="Button"/>
+                                <Button layoutX="91.0" layoutY="14.0" mnemonicParsing="false" text="Button"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Untitled Tab 2">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Button"/>
+                                <Slider layoutX="97.0" layoutY="20.0"/>
+                                <Slider layoutX="97.0" layoutY="50.0"/>
+                                <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" text="Button"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+
+        <Pane prefHeight="626.0" prefWidth="1024.0">
+            <children>
+                <Canvas height="560.0" layoutX="22.0" layoutY="25.0" width="980.0" BorderPane.alignment="CENTER"/>
+            </children>
+        </Pane>
+
+        <Pane prefHeight="50.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label layoutX="907.0" layoutY="9.0" text="Cell (1, 10)"/>
+            </children>
+        </Pane>
+    </children>
+</VBox>

@@ -1,10 +1,11 @@
-package alo.jfx.controller;
+package alo.jfx.fxml.hub;
 
-import alo.jfx.App;
+import alo.jfx.controller.MyClosable;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -12,26 +13,35 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class PrimaryController {
+public class ControllerHub {
 
-    private static final Logger logger = LogManager.getLogger(PrimaryController.class);
+    private static final Logger logger = LogManager.getLogger(ControllerHub.class);
 
     public void initialize() throws IOException {
         logger.info("Initialize: " + this.getClass().getCanonicalName());
     }
 
     @FXML
+    Button buttonTestStage;
+
+    @FXML
     private void switchToSecondary() throws IOException {
-        runAndWait("gameOfLife");
+        runAndWait("/alo/jfx/fxml/gameoflife/gameOfLife.fxml");
     }
 
     @FXML
     private void testClosable() throws IOException {
-        runAndWait("rayTracing");
+        runAndWait("/alo/jfx/fxml/raytracing/rayTracing.fxml");
+    }
+
+    @FXML
+    void openTestStage() throws IOException {
+        runAndWait("/alo/jfx/fxml/test/testStage.fxml");
     }
 
     private void runAndWait(String fxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+//        URL url = App.class.getResource("/alo/jfx/fxml/gameoflife/gameOfLife.fxml");
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource(fxml));
 
         Parent root = loader.load();
 

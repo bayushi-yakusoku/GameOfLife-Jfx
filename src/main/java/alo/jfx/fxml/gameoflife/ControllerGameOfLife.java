@@ -1,5 +1,7 @@
-package alo.jfx.controller;
+package alo.jfx.fxml.gameoflife;
 
+import alo.jfx.controller.MyClosable;
+import alo.jfx.fxml.hub.ControllerHub;
 import alo.jfx.model.Cell;
 import alo.jfx.model.GameOfLife;
 import javafx.animation.Animation;
@@ -8,7 +10,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -20,7 +22,7 @@ import java.util.Random;
 
 public class ControllerGameOfLife implements MyClosable {
 
-    private static final Logger logger = LogManager.getLogger(PrimaryController.class);
+    private static final Logger logger = LogManager.getLogger(ControllerHub.class);
 
     private int xNbCells;
     private int yNbCells;
@@ -40,7 +42,10 @@ public class ControllerGameOfLife implements MyClosable {
     private Random random;
 
     @FXML
-    private TextField textFieldCellCoordinates;
+    private Label labelCellCoordinates;
+
+    @FXML
+    private Label labelCellSize;
 
     /**
      * Canvas for displaying the {@link GameOfLife} board
@@ -140,7 +145,7 @@ public class ControllerGameOfLife implements MyClosable {
 //        logger.debug("Canvas: Handle Mouse event: " + event.getEventType());
 
         Cell cell = getCellFromMouseCoordinates(event.getX(), event.getY());
-        textFieldCellCoordinates.setText("" + cell);
+        labelCellCoordinates.setText("Cell " + cell);
 
         if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
 
@@ -205,6 +210,7 @@ public class ControllerGameOfLife implements MyClosable {
 
     private void updateConfiguration() {
         cellSize = calcCellSize();
+        labelCellSize.setText("Cell Size: " + cellSize);
         logger.info("Cell size is: " + cellSize);
 
         xNbCells = (int) (canvasGameOfLife.getWidth() / getCellSize());
