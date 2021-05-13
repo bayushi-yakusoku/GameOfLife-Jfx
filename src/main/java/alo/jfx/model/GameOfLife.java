@@ -79,7 +79,7 @@ public class GameOfLife {
      * @param y vertical coordinate
      */
     public void setAlive(int x, int y) {
-        board[x][y] = ALIVE;
+        setState(x, y, ALIVE);
     }
 
     /**
@@ -89,7 +89,7 @@ public class GameOfLife {
      * @param y vertical coordinate
      */
     public void setDead(int x, int y) {
-        board[x][y] = DEAD;
+        setState(x, y, DEAD);
     }
 
     /**
@@ -100,6 +100,12 @@ public class GameOfLife {
      * @param state new state for the cell
      */
     public void setState(int x, int y, int state) {
+        if (x < 0 || x >= width)
+            return;
+
+        if (y < 0 || y >= height)
+            return;
+
         board[x][y] = state;
     }
 
