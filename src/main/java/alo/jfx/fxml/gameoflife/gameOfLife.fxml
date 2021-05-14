@@ -36,8 +36,9 @@
                                 <Button fx:id="buttonClear" layoutX="78.0" layoutY="8.0" mnemonicParsing="false"
                                         onAction="#onClickClear" prefHeight="80.0" prefWidth="70.0" text="Clear"/>
 
-                                <Slider layoutX="191.0" layoutY="41.0"/>
-                                <Slider layoutX="364.0" layoutY="41.0"/>
+                                <Slider fx:id="sliderGameSpeed" layoutX="191.0" layoutY="41.0"/>
+
+                                <ComboBox fx:id="comboBoxSize" layoutX="370.0" layoutY="36.0" prefWidth="150.0"/>
                             </children>
                         </AnchorPane>
                     </content>
