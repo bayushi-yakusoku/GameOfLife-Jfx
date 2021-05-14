@@ -29,7 +29,8 @@ public class ControllerGameOfLife implements MyClosable {
 
     private static final Logger logger = LogManager.getLogger(ControllerHub.class);
 
-    private final double defaultDuration = 0.5;
+    private final Random random = new Random();
+    private List<Number> possibleCellSize;
     private int xNbCells;
     private int yNbCells;
     private double nbCells;
@@ -39,25 +40,37 @@ public class ControllerGameOfLife implements MyClosable {
     private Timeline timeline;
 
     private int currentStep;
-
-    private List<Number> possibleCellSize;
-
     private double cellSize;
-    private double nbInitMaxCells;
+    private Cell currentCell = new Cell(-1, -1);
+    private int pickupState;
 
-    private int minCellSize;
+    private double defaultDuration;
+    private int defaultMinCellSize;
 
-    private Random random;
-
+    /**
+     * List of possible cell sizes
+     * Selecting one of them will create an new empty
+     * {@link GameOfLife} board
+     */
     @FXML
     private ComboBox<Number> comboBoxSize;
 
+    /**
+     * Slider to change the game of life update speed
+     */
     @FXML
     private Slider sliderGameSpeed;
 
+    /**
+     * Label used to display the coordinates of the
+     * cell under the mouse pointer
+     */
     @FXML
     private Label labelCellCoordinates;
 
+    /**
+     * Label used to display the current cell size
+     */
     @FXML
     private Label labelCellSize;
 
@@ -72,7 +85,7 @@ public class ControllerGameOfLife implements MyClosable {
      */
     @FXML
     public void onClickStartGameOfLife() {
-        resumeGameOfLife();
+        gameOfLifeResume();
     }
 
     /**
@@ -80,7 +93,7 @@ public class ControllerGameOfLife implements MyClosable {
      */
     @FXML
     public void onClickStopGameOfLife() {
-        stopGameOfLife();
+        gameOfLifeStop();
     }
 
     /**
@@ -89,9 +102,9 @@ public class ControllerGameOfLife implements MyClosable {
      */
     @FXML
     public void onClickSingleStepUpdate() {
-        stopGameOfLife();
-        updateGameOfLife();
-        drawGameOfLife();
+        gameOfLifeStop();
+        gameOfLifeUpdate();
+        gameOfLifeDrawBoard();
     }
 
     /**
@@ -100,11 +113,13 @@ public class ControllerGameOfLife implements MyClosable {
      */
     @FXML
     public void onClickClear() {
-        stopGameOfLife();
+        gameOfLifeStop();
+
         logger.info("Clear...");
         gameOfLife = new GameOfLife(xNbCells, yNbCells);
-        drawGameOfLife();
         currentStep = 0;
+
+        gameOfLifeDrawBoard();
     }
 
     /**
@@ -113,17 +128,15 @@ public class ControllerGameOfLife implements MyClosable {
      */
     @FXML
     public void onClickNewSeed() {
-        stopGameOfLife();
+        gameOfLifeStop();
 
         logger.info("New Seed ...");
         gameOfLife = new GameOfLife(xNbCells, yNbCells);
-        randomlyInitGridCells();
-        drawGameOfLife();
         currentStep = 0;
-    }
 
-    private Cell currentCell;
-    private int pickupState;
+        setupGridInitialCells();
+        gameOfLifeDrawBoard();
+    }
 
     /**
      * Method called by {@link javafx.fxml.FXMLLoader} after instantiating this controller
@@ -132,87 +145,49 @@ public class ControllerGameOfLife implements MyClosable {
     public void initialize() {
         logger.debug("initialize: " + this.getClass().getCanonicalName());
 
-        random = new Random();
-
-        currentCell = new Cell(-1, -1);
+        defaultMinCellSize = 12;
+        defaultDuration = 0.5;
 
         setupCanvas();
-
-        minCellSize = 12;
-
-        calcCellSize();
-
-        updateConfiguration();
-
-        randomlyInitGridCells();
-
+        setupCellSize(defaultMinCellSize);
+        setupBoardDimensions();
+        setupGridInitialCells();
         setupGameSpeedSlider();
-
         setupSizeComboBox();
+        setupTimeLine(defaultDuration);
 
-        drawGameOfLife();
+        gameOfLifeDrawBoard();
 
-        initTimeLine(defaultDuration);
     }
 
-    private void setupSizeComboBox() {
-        comboBoxSize.getItems().addAll(possibleCellSize);
-        comboBoxSize.setValue(possibleCellSize.get(0));
-        comboBoxSize.getSelectionModel().selectedItemProperty().addListener(this::comboBoxOnChangeHandleEvent);
-    }
-
-    private void comboBoxOnChangeHandleEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+    private void eventChangeCellSize(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         logger.debug("comboBoxOnChangeHandleEvent old: " + oldValue + " new: " + newValue);
-        stopGameOfLife();
+        gameOfLifeStop();
 
         cellSize = newValue.doubleValue();
 
-        updateConfiguration();
+        setupBoardDimensions();
 
         gameOfLife = new GameOfLife(xNbCells, yNbCells);
 
-        drawGameOfLife();
+        gameOfLifeDrawBoard();
     }
 
-    private void setupGameSpeedSlider() {
-        sliderGameSpeed.setMin(0);
-        sliderGameSpeed.setMax(1);
-        sliderGameSpeed.setValue(0.5);
-
-        sliderGameSpeed.setShowTickMarks(true);
-        sliderGameSpeed.setShowTickLabels(true);
-
-        sliderGameSpeed.setMajorTickUnit(0.5);
-        sliderGameSpeed.setMinorTickCount(4);
-
-        sliderGameSpeed.setBlockIncrement(0.1);
-
-        sliderGameSpeed.setSnapToTicks(true);
-
-        sliderGameSpeed.addEventHandler(MouseEvent.ANY, this::sliderHandleMouseEvent);
-    }
-
-    private void sliderHandleMouseEvent(MouseEvent mouseEvent) {
+    private void eventChangeGameSpeed(MouseEvent mouseEvent) {
 //        logger.debug("SliderGameSpeed: Handle Mouse Event: " + mouseEvent.getEventType());
 
         if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
             logger.debug("SliderGameSpeed New Value: " + sliderGameSpeed.getValue());
             Animation.Status previousStatus = timeline.getStatus();
-            stopGameOfLife();
-            initTimeLine(sliderGameSpeed.getValue());
+            gameOfLifeStop();
+            setupTimeLine(sliderGameSpeed.getValue());
             if (previousStatus == Animation.Status.RUNNING)
                 timeline.play();
         }
     }
 
 
-    private void setupCanvas() {
-        gc = canvasGameOfLife.getGraphicsContext2D();
-
-        canvasGameOfLife.addEventHandler(MouseEvent.ANY, this::canvasHandleMouseEvent);
-    }
-
-    private void canvasHandleMouseEvent(MouseEvent event) {
+    private void eventActionOnCanvas(MouseEvent event) {
 //        logger.debug("Canvas: Handle Mouse event: " + event.getEventType());
 
         Cell cell = getCellFromMouseCoordinates(event.getX(), event.getY());
@@ -236,7 +211,7 @@ public class ControllerGameOfLife implements MyClosable {
                 logger.debug("Dragged to another cell: " + currentCell);
 
                 gameOfLife.setState(cell.getX(), cell.getY(), pickupState);
-                drawGameOfLife();
+                gameOfLifeDrawBoard();
             }
 
             return;
@@ -246,7 +221,7 @@ public class ControllerGameOfLife implements MyClosable {
             logger.debug("Canvas Event: Mouse Pressed");
 
             pickupState = gameOfLife.alternateState(cell.getX(), cell.getY());
-            drawGameOfLife();
+            gameOfLifeDrawBoard();
 
             return;
         }
@@ -266,35 +241,7 @@ public class ControllerGameOfLife implements MyClosable {
         return new Cell((int) (x / cellSize), (int) (y / cellSize));
     }
 
-    private void initTimeLine(Double duration) {
-        timeline = new Timeline(
-                new KeyFrame(Duration.millis(duration * 1000),
-                        actionEvent -> {
-                            updateGameOfLife();
-                            drawGameOfLife();
-                        }
-                )
-        );
-
-        timeline.setCycleCount(Animation.INDEFINITE);
-    }
-
-    private void updateConfiguration() {
-//        cellSize = calcCellSize();
-        labelCellSize.setText("Cell Size: " + cellSize);
-        logger.info("Cell size is: " + cellSize);
-
-        xNbCells = (int) (canvasGameOfLife.getWidth() / getCellSize());
-        logger.info("Number of cells on X: " + xNbCells);
-
-        yNbCells = (int) (canvasGameOfLife.getHeight() / getCellSize());
-        logger.info("Number of cells on Y: " + yNbCells);
-
-        nbCells = xNbCells * yNbCells;
-        logger.debug("Number of cells in the grid: " + nbCells);
-    }
-
-    private void resumeGameOfLife() {
+    private void gameOfLifeResume() {
         if (timeline.getStatus() != Animation.Status.RUNNING) {
             if (currentStep != 0) {
                 logger.info("Resuming Game of life...");
@@ -307,7 +254,7 @@ public class ControllerGameOfLife implements MyClosable {
         }
     }
 
-    private void stopGameOfLife() {
+    private void gameOfLifeStop() {
         if (timeline.getStatus() != Animation.Status.RUNNING)
             return;
 
@@ -315,28 +262,85 @@ public class ControllerGameOfLife implements MyClosable {
         timeline.stop();
     }
 
-    private void updateGameOfLife() {
+    private void gameOfLifeUpdate() {
         currentStep++;
         logger.debug("Step: " + currentStep);
         gameOfLife.updateBoard();
     }
 
-    private void drawGameOfLife() {
+    private void gameOfLifeDrawBoard() {
         drawAllCells();
         drawGrid();
     }
 
-    private void randomlyInitGridCells() {
+    private void setupSizeComboBox() {
+        comboBoxSize.getItems().addAll(possibleCellSize);
+        comboBoxSize.setValue(possibleCellSize.get(0));
+        comboBoxSize.getSelectionModel().selectedItemProperty().addListener(this::eventChangeCellSize);
+    }
+
+    private void setupGameSpeedSlider() {
+        sliderGameSpeed.setMin(0);
+        sliderGameSpeed.setMax(1);
+        sliderGameSpeed.setValue(defaultDuration);
+
+        sliderGameSpeed.setShowTickMarks(true);
+        sliderGameSpeed.setShowTickLabels(true);
+
+        sliderGameSpeed.setMajorTickUnit(0.5);
+        sliderGameSpeed.setMinorTickCount(4);
+
+        sliderGameSpeed.setBlockIncrement(0.1);
+
+        sliderGameSpeed.setSnapToTicks(true);
+
+        sliderGameSpeed.addEventHandler(MouseEvent.ANY, this::eventChangeGameSpeed);
+    }
+
+    private void setupCanvas() {
+        gc = canvasGameOfLife.getGraphicsContext2D();
+
+        canvasGameOfLife.addEventHandler(MouseEvent.ANY, this::eventActionOnCanvas);
+    }
+
+    private void setupTimeLine(Double duration) {
+        timeline = new Timeline(
+                new KeyFrame(Duration.millis(duration * 1000),
+                        actionEvent -> {
+                            gameOfLifeUpdate();
+                            gameOfLifeDrawBoard();
+                        }
+                )
+        );
+
+        timeline.setCycleCount(Animation.INDEFINITE);
+    }
+
+    private void setupBoardDimensions() {
+        labelCellSize.setText("Cell Size: " + cellSize);
+        logger.info("Cell size is: " + cellSize);
+
+        xNbCells = (int) (canvasGameOfLife.getWidth() / cellSize);
+        logger.info("Number of cells on X: " + xNbCells);
+
+        yNbCells = (int) (canvasGameOfLife.getHeight() / cellSize);
+        logger.info("Number of cells on Y: " + yNbCells);
+
+        nbCells = xNbCells * yNbCells;
+        logger.debug("Number of cells in the grid: " + nbCells);
+    }
+
+    private void setupGridInitialCells() {
         gameOfLife = new GameOfLife(xNbCells, yNbCells);
 
-        nbInitMaxCells = nbCells / 2 + random.nextInt(500);
+        double nbInitMaxCells = nbCells / 2 + random.nextInt(500);
 
         for (double nbCell = 0; nbCell < nbInitMaxCells; nbCell++) {
             gameOfLife.setAlive(random.nextInt(this.xNbCells), random.nextInt(yNbCells));
         }
     }
 
-    private void calcCellSize() {
+    private void setupCellSize(int minCellSize) {
         double width = canvasGameOfLife.getWidth();
         double height = canvasGameOfLife.getHeight();
 
@@ -354,11 +358,7 @@ public class ControllerGameOfLife implements MyClosable {
         cellSize = possibleCellSize.get(0).doubleValue();
     }
 
-    public double getCellSize() {
-        return cellSize;
-    }
-
-    private void fillGridCell(int x, int y, Paint color) {
+    private void drawCell(int x, int y, Paint color) {
         gc.setFill(color);
 
         // Parameters are x, y, offset x, offset y:
@@ -384,9 +384,9 @@ public class ControllerGameOfLife implements MyClosable {
         for (int x = 0; x < xNbCells; x++) {
             for (int y = 0; y < yNbCells; y++) {
                 if (board[x][y] == 0)
-                    fillGridCell(x, y, Color.BEIGE);
+                    drawCell(x, y, Color.BEIGE);
                 else
-                    fillGridCell(x, y, Color.BLACK);
+                    drawCell(x, y, Color.BLACK);
             }
         }
     }
@@ -394,6 +394,6 @@ public class ControllerGameOfLife implements MyClosable {
     @Override
     public void onCloseEvent() {
         logger.debug("Controller onCloseEvent: " + this.getClass().getCanonicalName());
-        stopGameOfLife();
+        gameOfLifeStop();
     }
 }
