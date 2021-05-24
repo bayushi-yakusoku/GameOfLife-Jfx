@@ -107,6 +107,12 @@ public class ControllerRayTracing implements MyClosable {
         if (m < 0 || m > 1)
             return null;
 
+        double k = (c.getY() + m * j.getY() - a.getY()) / i.getY();
+
+        // Point is not on segment [AB[
+        if (k < 0)
+            return null;
+
         Point2D p = new Point2D(
                 c.getX() + m * j.getX(),
                 c.getY() + m * j.getY()
