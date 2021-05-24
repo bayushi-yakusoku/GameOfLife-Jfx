@@ -158,10 +158,38 @@ public class ControllerRayTracing implements MyClosable {
         }
     }
 
+    private void drawRayCasting(double x, double y) {
+        Point2D origin = new Point2D(x, y);
+        Point2D collision;
+
+        for (Point2D point :
+                listRay) {
+            collision = testCollision(origin, point);
+
+            if (collision != null)
+                drawLine(origin, collision);
+        }
+    }
+
+    private Point2D testCollision(Point2D a, Point2D b) {
+        Point2D collision;
+
+        for (Point2D[] line :
+                listLines) {
+            collision = getIntersection(a, b, line[0], line[1]);
+
+            if (collision != null)
+                return collision;
+        }
+
+        return null;
+    }
+
     private void eventActionOnCanvas(MouseEvent event) {
         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
             listRay = setupRay(event.getX(), event.getY());
-            drawRay(event.getX(), event.getY());
+//            drawRay(event.getX(), event.getY());
+            drawRayCasting(event.getX(), event.getY());
 
             listRay = null;
         }
