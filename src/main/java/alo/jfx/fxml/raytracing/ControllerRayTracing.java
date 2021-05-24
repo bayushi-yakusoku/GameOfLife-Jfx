@@ -23,8 +23,10 @@ public class ControllerRayTracing implements MyClosable {
     private static final Logger logger = LogManager.getLogger(ControllerHub.class);
 
     private final Random rand = new Random();
-    private final List<Point2D[]> listLines = new ArrayList<Point2D[]>();
-    List<Point2D> listRay;
+    private final List<Point2D[]> listLines = new ArrayList<>();
+
+    private final List<Point2D[]> listRay = new ArrayList<>();
+
     @FXML
     private Canvas canvasRayTracing;
     private GraphicsContext gc;
@@ -41,7 +43,8 @@ public class ControllerRayTracing implements MyClosable {
 
         //sampleLines();
         setupListLines();
-        drawLines();
+
+        refresh();
 
         canvasRayTracing.addEventHandler(MouseEvent.ANY, this::eventActionOnCanvas);
     }
@@ -62,7 +65,6 @@ public class ControllerRayTracing implements MyClosable {
 
 
     private void drawLine(Point2D a, Point2D b) {
-        gc.setStroke(Color.BLUE);
         gc.strokeLine(a.getX(), a.getY(), b.getX(), b.getY());
     }
 
@@ -128,70 +130,94 @@ public class ControllerRayTracing implements MyClosable {
         }
     }
 
-    private void drawLines() {
+    private void drawLines(List<Point2D[]> listLines, Color color) {
+        gc.setStroke(color);
         for (Point2D[] line :
                 listLines) {
             drawLine(line[0], line[1]);
         }
     }
 
-    private List<Point2D> setupRay(double x, double y) {
-        List<Point2D> listRay = new ArrayList<>();
+    private void setupRay(double x, double y) {
+        Point2D a = new Point2D(x, y);
 
-        double nbRays = 18;
+        listRay.clear();
+
+        double nbRays = 180;
         double angleBetweenRays = 360 / nbRays;
         double length = 10;
 
         for (int index = 0; index < nbRays; index++) {
-            listRay.add(new Point2D(
-                    x + cos(toRadians(angleBetweenRays * index)) * length,
-                    y + sin(toRadians(angleBetweenRays * index)) * length));
-        }
+            Point2D b = new Point2D(
+                    a.getX() + cos(toRadians(angleBetweenRays * index)) * length,
+                    a.getY() + sin(toRadians(angleBetweenRays * index)) * length);
 
-        return listRay;
-    }
-
-    private void drawRay(double x, double y) {
-        for (Point2D point :
-                listRay) {
-            drawLine(new Point2D(x, y), point);
-        }
-    }
-
-    private void drawRayCasting(double x, double y) {
-        Point2D origin = new Point2D(x, y);
-        Point2D collision;
-
-        for (Point2D point :
-                listRay) {
-            collision = testCollision(origin, point);
+            Point2D collision = testCollision(a, b);
 
             if (collision != null)
-                drawLine(origin, collision);
+                listRay.add(new Point2D[]{a, collision});
+            else
+                listRay.add(new Point2D[]{a, b});
         }
     }
+
+//    private void drawRay(double x, double y) {
+//        for (Point2D[] point :
+//                listRay) {
+//            drawLine(new Point2D(x, y), point);
+//        }
+//    }
+
+//    private void drawRayCasting(double x, double y) {
+//        Point2D origin = new Point2D(x, y);
+//        Point2D collision;
+//
+//        for (Point2D point :
+//                listRay) {
+//            collision = testCollision(origin, point);
+//
+//            if (collision != null)
+//                drawLine(origin, collision);
+//        }
+//    }
 
     private Point2D testCollision(Point2D a, Point2D b) {
         Point2D collision;
+        Point2D nearest = null;
+        double distMin = 99999;
+        double distCurrent;
 
         for (Point2D[] line :
                 listLines) {
             collision = getIntersection(a, b, line[0], line[1]);
 
-            if (collision != null)
-                return collision;
+            if (collision != null) {
+                distCurrent = getDistance(a, collision);
+
+                if (distCurrent < distMin) {
+                    distMin = distCurrent;
+                    nearest = collision;
+                }
+            }
         }
 
-        return null;
+        return nearest;
+    }
+
+    private double getDistance(Point2D a, Point2D b) {
+        return sqrt(pow(b.getX() - a.getX(), 2) + pow(b.getY() - a.getY(), 2));
     }
 
     private void eventActionOnCanvas(MouseEvent event) {
         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-            listRay = setupRay(event.getX(), event.getY());
-//            drawRay(event.getX(), event.getY());
-            drawRayCasting(event.getX(), event.getY());
-
-            listRay = null;
+            refresh();
+            setupRay(event.getX(), event.getY());
+            drawLines(listRay, Color.RED);
         }
+    }
+
+    private void refresh() {
+        gc.clearRect(0, 0, canvasRayTracing.getWidth(), canvasRayTracing.getHeight());
+        drawLines(listLines, Color.BLUE);
     }
 }
